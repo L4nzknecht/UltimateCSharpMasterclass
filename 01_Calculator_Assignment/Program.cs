@@ -2,6 +2,7 @@
 
 Console.WriteLine("Hello!");
 
+
 Console.WriteLine("Input the first number:");
 int num1 = int.Parse(Console.ReadLine());
 
@@ -15,17 +16,20 @@ Console.WriteLine("[M]ultiply");
 
 string userChoice = Console.ReadLine();
 
-if (userChoice == "A" || userChoice == "a") 
+if (IsUserChoice(userChoice, "a"))
 {
-    Console.WriteLine(Addition(num1, num2));
+    int result = num1 + num2;
+    PrintOperationResult(num1, num2, result, "+");
 }
-else if (userChoice == "S" || userChoice == "s") 
+else if (IsUserChoice(userChoice, "s"))
 {
-    Console.WriteLine(Substraction(num1, num2));
+    int result = num1 - num2;
+    PrintOperationResult(num1, num2, result, "-");
 }
-else if (userChoice == "M" || userChoice == "m") 
+else if (IsUserChoice(userChoice, "m"))
 {
-    Console.WriteLine(Multiplication(num1, num2));
+    int result = num1 * num2;
+    PrintOperationResult(num1, num2, result, "*");
 }
 else
 {
@@ -35,20 +39,14 @@ else
 Console.WriteLine("Press any key to close");
 Console.ReadKey();
 
-string Addition(int num1, int num2)
+#region Methods
+void PrintOperationResult(int num1, int num2, int result, string @operator)
 {
-    int result = num1 + num2;
-    return $"{num1} + {num2} = {result}";
+    Console.WriteLine($"{num1} {@operator} {num2} = {result}");
 }
 
-string Substraction(int num1, int num2)
+static bool IsUserChoice(string userChoice, string comparison)
 {
-    int result = num1 - num2;
-    return $"{num1} - {num2} = {result}";
+    return userChoice.ToUpper() == comparison.ToUpper();
 }
-
-string Multiplication(int num1, int num2)
-{
-    int result = num1 * num2;
-    return $"{num1} * {num2} = {result}";
-}
+#endregion
