@@ -1,4 +1,6 @@
-﻿var todoList = new List<string> ();
+﻿using System;
+
+var todoList = new List<string> ();
 bool shallEnd = false;
 
 Console.WriteLine("Hello!");
@@ -16,21 +18,21 @@ do
 
     switch(userChoice)
     {
-        case "s":
-        case "S":
-            ShowTodoList();
-            break;
         case "a":
         case "A":
             AddTodoItem();
+            break;
+        case "e":
+        case "E":
+            shallEnd = true;
             break;
         case "r":
         case "R":
             RemoveToDoItem();
             break;
-        case "e":
-        case "E":
-            shallEnd = true;
+        case "s":
+        case "S":
+            ShowTodoList();
             break;
         default:
             Console.WriteLine("Incorrect input");
@@ -38,78 +40,92 @@ do
     }
 } while (!shallEnd);
 
-Console.ReadKey();
-
 void AddTodoItem()
 {
     string toDoItem;
-    bool isValidDescription = false;
     do
     {
         Console.WriteLine("Enter the TODO description:");
-
         toDoItem = Console.ReadLine();
+    } while (IsDescriptionValid(toDoItem));
 
-        if (string.IsNullOrWhiteSpace(toDoItem))
-        {
-            Console.WriteLine("The description cannot be empty.");
-        }
-        else if (todoList.Contains(toDoItem))
-        {
-            Console.WriteLine("The description must be unique");
-        }
-        else 
-        {
-            todoList.Add(toDoItem);
-            isValidDescription = true;
-        }
-    } while (!isValidDescription);
-
+    todoList.Add(toDoItem);
     Console.WriteLine($"TODO successfully added: {toDoItem}");
-}
-
-void ShowTodoList()
-{
-    if (todoList.Count == 0)
-    {
-        Console.WriteLine("No TODOs have been added yet.");
-        return;
-    }
-    for (int i = 0; i < todoList.Count; i++)
-    {
-        string? todo = todoList[i];
-        Console.WriteLine($"{i + 1}. {todo}");
-    }
-    return;
 }
 
 void RemoveToDoItem()
 {
     if (todoList.Count == 0)
     {
-        Console.WriteLine("No TODOs have been added yet.");
+        ShowNoToDoMessages();
         return;
     }
-    bool IsIndexValid = false;
+    int index;
     do
     {
         Console.WriteLine("Select the Index of the ToDo you want to remove:");
         ShowTodoList();
-        string userInput = Console.ReadLine();
-        if (string.IsNullOrWhiteSpace(userInput))
-        {
-            Console.WriteLine("Selected index cannot be empty.");
-        }
-        else if (!int.TryParse(userInput, out int index) || index < 1 || index > todoList.Count)
-        {
-            Console.WriteLine("The given index is not valid.");
-        }
-        else 
-        {
-            var indexOfTodo = index - 1;
-            Console.WriteLine($"TODO removed: {todoList[indexOfTodo]}");
-            todoList.RemoveAt(indexOfTodo);
-            IsIndexValid = true;
-        }
-    } while (!IsIndexValid);
+    } while (!TryReadIndex(out index));
+
+    RemoveToDoAtIndex(index - 1);
+}
+
+void ShowTodoList()
+{
+    if (todoList.Count == 0)
+    {
+        ShowNoToDoMessages();
+        return;
+    }
+    for (int i = 0; i < todoList.Count; i++)
+    {
+        Console.WriteLine($"{i + 1}. {todoList[i]}");
+    }
+    return;
+}
+
+bool IsDescriptionValid(string description)
+{
+    if (string.IsNullOrWhiteSpace(description))
+    {
+        Console.WriteLine("The description cannot be empty.");
+        return false;
+    }
+    if (todoList.Contains(description))
+    {
+        Console.WriteLine("The description must be unique");
+        return false;
+    }
+    return true;
+}
+
+void RemoveToDoAtIndex(int index)
+{
+    todoList.RemoveAt(index);
+    Console.WriteLine($"TODO removed: {todoList[index]}");
+}
+
+void ShowNoToDoMessages()
+{
+    Console.WriteLine("No TODOs have been added yet.");
+}
+
+bool TryReadIndex(out int index)
+{
+    string userInput = Console.ReadLine();
+    if (string.IsNullOrWhiteSpace(userInput))
+    {
+        index = 0;
+        Console.WriteLine("Selected index cannot be empty.");
+        return false;
+    }
+    else if (!int.TryParse(userInput, out index) || index < 1 || index > todoList.Count)
+    {
+        Console.WriteLine("The given index is not valid.");
+        return false;
+    }
+    else
+    {
+        return true;
+    }
 }
